@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+  api:
+    container_name: "cart-api-example"
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app/src
+    links:
+      - db
+
+  db:
+    image: postgres:13.4-buster
+    container_name: "cart-api-example-db"
+    hostname: "cart_api_example_db"
+    environment:
+      - POSTGRES_PASSWORD=ultra-secret-password123
+      - POSTGRES_USER=cart-api-example-user
+      - POSTGRES_DB=cart-api-example-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - cart_api_example_db_data:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    depends_on:
+      - api
+      - db
+    build: .
+    command: bash -c "alembic upgrade head"
+
+volumes:
+  cart_api_example_db_data:
+    name: cart_api_example_db_data

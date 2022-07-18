@@ -20,7 +20,4 @@ RUN poetry install
 
 COPY . /app/src/
 
-
-#RUN pip install --use-feature=in-tree-build  .
-
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
