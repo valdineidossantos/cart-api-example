@@ -1,21 +1,33 @@
 # cart-api-example
 This is cart API Example
 
+### ✔️ Tecnologies in this project
+
+- Language ``python 3.9``
+- API Framework ``FastAPI``
+- Database framework ``SQLAlchemy``
+- Database version control ``Alembic``
+- Python lib dependencies control ``poetry``
+
 
 ## How to use?
-
 1. Clone this repository
-
-
-2. Run:
-   ``` bash
-   docker-compose up
+  ``` bash
+  git clone git@github.com:valdineidossantos/cart-api-example.git
    ```
-3. Run:
+2. Go to project directory
+ ``` bash
+  cd ./cart-api-example/
+  ```
+3. Build aplication run:
    ``` bash
-   docker run   -p 8000:8000 cart
+   docker-compose build
    ```
-4. In your browser call:
-  [Swagger Localhost](http://localhost:8000/docs)
+4. Execute aplication run:
+   ``` bash
+   docker-compose up --build
+   ```
+5. Swagger documentation, try api:
+  [ http://localhost:8000/docs ](http://localhost:8000/docs) 
 
 
