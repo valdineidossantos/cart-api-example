@@ -13,5 +13,6 @@ class Product(Base):
     category = Column(String(length=100), nullable=False)
     price = Column(Float, nullable=False)
     in_stock = Column(Boolean, default=True)
+    
 
 
