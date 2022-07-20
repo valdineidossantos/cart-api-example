@@ -1,10 +1,10 @@
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import UserNotFound
+from app.helpers.exceptions_helper import GenericNotFoundException, UserNotFound
 
 from app.repository.user_repository import UserRepository
 #from app.schemas.User_schemas import UserCreate, UserUpdate
 from fastapi import APIRouter, Depends,  HTTPException, status
-from sqlalchemy.exc import NoResultFound
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -13,7 +13,7 @@ from app.schemas.user_schemas import UserCreate, UserUpdate
 
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/v1/users",
     tags=["users"]
 )
 
@@ -30,7 +30,7 @@ async def get_user_by_id( user_id: int, db_session: AsyncSession = Depends(db_se
     user_repository = UserRepository (db_session, User)
     try:
         return await user_repository.get_by_id(user_id)
-    except NoResultFound as error:
+    except GenericNotFoundException:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
@@ -65,5 +65,7 @@ async def update_User(update_user: UserUpdate, user_id: int, db_session: AsyncSe
     )
     try:        
         return await user_repository.update(user)
-    except UserNotFound as error:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
+    except GenericNotFoundException as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+

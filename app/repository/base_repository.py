@@ -3,6 +3,8 @@ from typing import Union
 from app.database.database_helper import Base
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import NoResultFound
+from app.helpers.exceptions_helper import GenericNotFoundException
 
 
 class BaseRepository:
@@ -15,8 +17,11 @@ class BaseRepository:
         return result.fetchall()
     
     async def get_by_id(self, requested_id: int) -> Union[Base, None]:
-        result = await self.session.execute(select(self.model).where(self.model.id == requested_id))        
-        return result.one()
+        try:
+            result = await self.session.execute(select(self.model).where(self.model.id == requested_id))        
+            return result.one()
+        except NoResultFound as nrf:
+            raise GenericNotFoundException(message=str(nrf))
 
             
 
