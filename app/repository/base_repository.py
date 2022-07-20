@@ -15,8 +15,11 @@ class BaseRepository:
         return result.fetchall()
     
     async def get_by_id(self, requested_id: int) -> Union[Base, None]:
-        result = await self.session.execute(select(self.model).where(self.model.id == requested_id))
-        return result.fetchone()
+        result = await self.session.execute(select(self.model).where(self.model.id == requested_id))        
+        return result.one()
+
+            
+
     
     async def delete(self, requested_id: int) -> bool:
         result = await self.session.execute(select(self.model).where(self.model.id == requested_id))
