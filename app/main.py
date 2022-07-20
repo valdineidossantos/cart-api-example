@@ -13,6 +13,7 @@ from app.schemas.product_schemas import ProductCreate, ProductUpdate
 
 from app.routes.product import router as product_router
 from app.routes.user import router as user_router
+from app.routes.cart import router as cart_router
 
 
 app = FastAPI()
@@ -23,3 +24,4 @@ async def read_root():
 
 app.include_router(product_router)
 app.include_router(user_router)
+app.include_router(cart_router)

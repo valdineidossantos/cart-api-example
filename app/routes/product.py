@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 router = APIRouter(
-    prefix="/products",
+    prefix="/v1/products",
     tags=["products"]
 )
 

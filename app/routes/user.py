@@ -13,7 +13,7 @@ from app.schemas.user_schemas import UserCreate, UserUpdate
 
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/v1/users",
     tags=["users"]
 )
 
