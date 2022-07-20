@@ -1,4 +1,8 @@
 
+class BaseException(Exception):
+    def __init__(self, TargetClass,message):
+        self.TargetClass = TargetClass
+        self.message = message
 
 class ProductNotFound(Exception):
     def __init__(self, message):

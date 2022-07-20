@@ -2,6 +2,7 @@ from typing import Union
 from urllib.error import HTTPError
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_helper import db_session
@@ -26,7 +27,11 @@ async def get_all_products( db_session: AsyncSession = Depends(db_session)):
 @app.get("/products/{product_id}", status_code=status.HTTP_200_OK)
 async def get_products_by_id( product_id: int, db_session: AsyncSession = Depends(db_session)):
     product_repository = ProductRepository (db_session, Product)
-    return await product_repository.get_by_id(product_id)
+    try:
+        return await product_repository.get_by_id(product_id)
+    except NoResultFound as error:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+
 
 
 @app.post("/products/",  status_code=status.HTTP_201_CREATED)
@@ -61,4 +66,4 @@ async def update_product(update_product: ProductUpdate, product_id: int, db_sess
     try:        
         return await product_repository.update(product)
     except ProductNotFound as error:
-        raise HTTPException(status_code=status.HTTP_200_OK, detail=str(error))
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))

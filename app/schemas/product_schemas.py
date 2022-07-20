@@ -11,6 +11,9 @@ class ProductCreate(BaseModel):
     price: float
     in_stock: Union[bool, None] = True
 
+    class Config:
+        orm_mode = True
+
 class ProductUpdate(BaseModel):
     name: str
     short_name: str
@@ -19,3 +22,6 @@ class ProductUpdate(BaseModel):
     category: Union[str, None] = None
     price: float
     in_stock: Union[bool, None] = True
+
+    class Config:
+        orm_mode = True
