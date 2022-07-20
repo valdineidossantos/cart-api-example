@@ -1,5 +1,5 @@
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import ProductNotFound
+from app.helpers.exceptions_helper import GenericNotFoundException, ProductNotFound
 from app.models.product_model import Product
 from app.repository.product_repository import ProductRepository
 from app.schemas.product_schemas import ProductCreate, ProductUpdate
@@ -27,7 +27,7 @@ async def get_products_by_id( product_id: int, db_session: AsyncSession = Depend
     product_repository = ProductRepository (db_session, Product)
     try:
         return await product_repository.get_by_id(product_id)
-    except NoResultFound as error:
+    except GenericNotFoundException:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
 
 
@@ -65,5 +65,6 @@ async def update_product(update_product: ProductUpdate, product_id: int, db_sess
         )
     try:        
         return await product_repository.update(product)
-    except ProductNotFound as error:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(error))
+    except GenericNotFoundException:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+

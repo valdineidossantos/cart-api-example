@@ -1,7 +1,7 @@
 
 
 from typing import Union
-
+from sqlalchemy.exc import NoResultFound    
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import UserNotFound
 from app.models.user_model import User
@@ -18,18 +18,18 @@ class UserRepository(BaseRepository):
         await self.session.commit()
         return user
     
-    async def update(self, user: User) -> Union[User, None]:
-       
-        database_user = await self.get_by_id(user.id)
+    async def update(self, user: User) -> Union[User, None]:       
 
-        if database_user:
-            database_user = database_user[0]
-            database_user.name = user.name
-            database_user.email = user.email
-            database_user.active = user.active
+        try:
+            database_user = await self.get_by_id(user.id)
+            if database_user:
+                database_user = database_user[0]
+                database_user.name = user.name
+                database_user.email = user.email
+                database_user.active = user.active
 
-            self.session.add(database_user)
-            await self.session.commit()
-            return database_user
-        
-        raise UserNotFound("User not found")
+                self.session.add(database_user)
+                await self.session.commit()
+                return database_user
+        except NoResultFound:    
+            raise UserNotFound("User not found")
