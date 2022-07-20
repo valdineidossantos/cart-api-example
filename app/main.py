@@ -42,7 +42,8 @@ async def create_product( new_product: ProductCreate, db_session: AsyncSession =
             short_name=new_product.short_name, 
             description=new_product.description, 
             category=new_product.category, 
-            price=new_product.price
+            price=new_product.price,
+            quantity_stock=new_product.quantity_stock,
         )
     return await product_repository.create(product)
 
@@ -61,6 +62,7 @@ async def update_product(update_product: ProductUpdate, product_id: int, db_sess
             description=update_product.description, 
             category=update_product.category, 
             price=update_product.price,
+            quantity_stock=update_product.quantity_stock,
             id=product_id
         )
     try:        

@@ -13,8 +13,6 @@ user="cart-api-example-user"
 password="ultra-secret-password123"
 db_name="cart-api-example-db"
 Base=declarative_base()
-# engine = create_engine(f"postgresql://{user}:{password}@{host}/{db_name}", echo=True)
-# LocalSession = sessionmaker(bind=engine)
 
 
 
