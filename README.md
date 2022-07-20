@@ -1,5 +1,17 @@
 # cart-api-example
-This is cart API Example
+This is cart API Example 
+
+## dependencies
+This project depends docker and docker-compose.
+
+How to install docker and docker-compose?
+Follow the steps described in official documentations.
+
+[Docker install] (https://docs.docker.com/engine/install/)
+
+[Docker Compose install] (https://docs.docker.com/compose/install/)
+
+
 
 ### ✔️ Tecnologies in this project
 
