@@ -15,7 +15,17 @@ class Cart(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     finish_at = Column(DateTime(timezone=True), default=None)
     user_id = Column(Integer, nullable=False)
-    items = relationship(Item, backref="Cart")
+    
+    items =  relationship("Item", back_populates="cart")
+    
+
+    def __repr__(self):
+        return "<Cart(id='%s', user_id='%s', finish_at='%s' , items ='%s' )>" % (
+                self.id, 
+                self.user_id, 
+                self.finish_at, 
+                self.items
+            )
 
     @property
     def finished(self):
@@ -25,5 +35,3 @@ class Cart(Base):
     
     
         
-
-

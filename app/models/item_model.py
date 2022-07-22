@@ -14,12 +14,27 @@ class Item(Base):
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    cart_id = Column(Integer, ForeignKey('carts.id'))
-    product_id = Column(Integer,nullable=False)
+   
+    product_id = Column(Integer,nullable=False, index=True)
     quantity = Column(Integer,nullable=False)
-    cart = relationship("Cart")
+    cart_id = Column(ForeignKey('carts.id'), index=True)
+    cart = relationship("Cart", back_populates="items")
+
+    def __repr__(self):
+        return "<Item(id='%s', product_id='%s', quantity='%s', cart_id='%s')>" % (
+                self.id, 
+                self.product_id, 
+                self.quantity, 
+                self.cart_id,
+                
+            )
+    
     
         
 
     
 
+
+    
+    
+    
