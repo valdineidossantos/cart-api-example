@@ -15,13 +15,22 @@ from app.routes.product import router as product_router
 from app.routes.user import router as user_router
 from app.routes.cart import router as cart_router
 
+def get_db():
+    return db_session
 
-app = FastAPI()
+def get_app():
+    app = FastAPI()
+    app.include_router(product_router)
+    app.include_router(user_router)
+    app.include_router(cart_router)
+    return app
+
+app = get_app()
 
 @app.get("/")
 async def read_root():
     return "Start Page"
 
-app.include_router(product_router)
-app.include_router(user_router)
-app.include_router(cart_router)
+
+
+
