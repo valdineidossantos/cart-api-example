@@ -36,6 +36,13 @@ class ItemRepository(BaseRepository):
         await self.session.execute(delete(self.model).where(self.model.cart_id == cart_id))
         self.session.commit()
     
+    async def delete_item(self, cart_id, product_id):
+        stmt = delete(self.model).where(
+            and_(self.model.cart_id == cart_id, product_id == self.model.product_id)
+            )
+        await self.session.execute(stmt)
+        self.session.commit()
+    
     async def create_all(self, items: list[Item]) -> Union[list[Item], None]:       
         self.session.add_all(items)
         await self.session.commit()
@@ -46,6 +53,17 @@ class ItemRepository(BaseRepository):
                     select(self.model, Item)
                         .where( self.model.cart_id == cart_id))
         return result.all()
+    
+    async def get_items_by_product_id(self, cart_id: int, product_id: int) -> Union[Base, None]:
+        stmt = select(self.model, Item).where(
+                            and_(self.model.product_id == product_id,
+                                 self.model.cart_id == cart_id)
+                            )
+                    
+        result = await self.session.execute(stmt)
+                            
+        return result.first()
+    
     
 
     
