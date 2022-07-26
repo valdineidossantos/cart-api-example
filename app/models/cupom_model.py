@@ -15,12 +15,11 @@ class Cupom(Base):
     cupoms = relationship("Cart", back_populates="cupoms")
 
     def __repr__(self):
-        return "<Cupom(id='%s', name='%s', discount='%s', active='%s', cupom='%s')>" % (
+        return "<Cupom(id='%s', name='%s', discount='%s', active='%s')>" % (
             self.id,
             self.name,
             self.discount,
-            self.active,
-            self.cupoms,
+            self.active
         )
     
         

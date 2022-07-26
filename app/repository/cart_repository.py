@@ -2,19 +2,16 @@
 
 from typing import Union
 
-from sqlalchemy import all_, and_, func, select
-from sqlalchemy.exc import NoResultFound
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
-
 from app.database.database_helper import Base
-from app.helpers.exceptions_helper import (GenericNotFoundException,
-                                           UserNotFound)
+from app.helpers.exceptions_helper import GenericNotFoundException
 from app.models.cart_model import Cart
+from app.models.cupom_model import Cupom
 from app.models.item_model import Item
 from app.repository.base_repository import BaseRepository
 from app.repository.item_repository import ItemRepository
-from app.schemas.cart_schemas import CartSchemaResquest, ItemSchemaResquest
+from sqlalchemy import all_, and_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 
 class CartRepository(  BaseRepository ):
@@ -67,12 +64,15 @@ class CartRepository(  BaseRepository ):
 
     async def get_cart_by_user_id(self, user_id: int) -> Union[Base, None]:
         
-        stmt = select(Cart).where(
+        stmt = select(Cart,Item, Cupom).where(
                                    and_(
                                     Cart.finish_at == None,
                                     Cart.user_id == user_id, 
                                     )
-                                ).options(selectinload(Cart.items))
+                                ).options(
+                                        selectinload(Cart.items), 
+                                        selectinload(Cart.cupoms)
+                                    )
         
         stream =  await self.session.execute(stmt)
         result = stream.scalars().first()
