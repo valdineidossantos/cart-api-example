@@ -1,13 +1,13 @@
-from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import GenericNotFoundException, ProductNotFound
-from app.models.product_model import Product
-from app.repository.product_repository import ProductRepository
-from app.schemas.product_schemas import ProductCreate, ProductUpdate
-from fastapi import APIRouter, Depends,  HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
+from app.database.database_helper import db_session
+from app.helpers.exceptions_helper import (GenericNotFoundException,
+                                           ProductNotFound)
+from app.models.product_model import Product
+from app.repository.product_repository import ProductRepository
+from app.schemas.product_schemas import ProductCreate, ProductUpdate
 
 router = APIRouter(
     prefix="/v1/products",

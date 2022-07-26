@@ -1,6 +1,7 @@
 import datetime
 from enum import Enum
 from typing import Union
+
 from pydantic import BaseModel, validator
 
 
@@ -19,8 +20,8 @@ class Items(BaseModel):
 
 class CartCreate(BaseModel):
     user_id: int
-    items: Union[list[Items], None] = None
-    
+    cupom: Union[str, None] = None
+    items: Union[list[Items], None] = None    
     class Config:
         orm_mode = True
 

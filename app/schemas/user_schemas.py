@@ -1,10 +1,9 @@
+import re
 from enum import Enum
 from typing import Union
+
 from pydantic import BaseModel, validator
 
-
-import re   
-  
 regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  
   
 def valid_email(email):   

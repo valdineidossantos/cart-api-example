@@ -1,7 +1,6 @@
+from sqlalchemy import Boolean, Column, Float, Integer, String
+
 from app.database.database_helper import Base
-from sqlalchemy import Boolean, Column, Float, Integer,  String
-
-
 
 
 class Product(Base):

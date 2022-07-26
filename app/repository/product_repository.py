@@ -1,13 +1,14 @@
 
 
 from typing import Union
-from app.helpers.exceptions_helper import ProductNotFound
 
-from app.repository.base_repository import BaseRepository
-from app.database.database_helper import Base
 from sqlalchemy.ext.asyncio import AsyncScalarResult, AsyncSession
 
-from app.models.product_model import Product 
+from app.database.database_helper import Base
+from app.helpers.exceptions_helper import ProductNotFound
+from app.models.product_model import Product
+from app.repository.base_repository import BaseRepository
+
 
 class ProductRepository(BaseRepository):
     def __init__(self, session: AsyncSession, model: Base):

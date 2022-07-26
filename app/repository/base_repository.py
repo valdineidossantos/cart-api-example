@@ -1,9 +1,10 @@
 from typing import Union
 
-from app.database.database_helper import Base
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.database.database_helper import Base
 from app.helpers.exceptions_helper import GenericNotFoundException
 
 
