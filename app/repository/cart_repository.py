@@ -1,17 +1,18 @@
 
 
-from sqlalchemy.orm import selectinload
 from typing import Union
+
 from sqlalchemy import all_, and_, func, select
-from sqlalchemy.exc import NoResultFound    
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.database.database_helper import Base
-from app.helpers.exceptions_helper import GenericNotFoundException, UserNotFound
+from app.helpers.exceptions_helper import (GenericNotFoundException,
+                                           UserNotFound)
 from app.models.cart_model import Cart
 from app.models.item_model import Item
-
 from app.repository.base_repository import BaseRepository
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.repository.item_repository import ItemRepository
 from app.schemas.cart_schemas import CartSchemaResquest, ItemSchemaResquest
 
@@ -22,9 +23,13 @@ class CartRepository(  BaseRepository ):
         self.item_repository = ItemRepository(session, Item)
     
     async def create(self, cart: Cart) -> Union[Cart, None]:       
+        
         try:
-            valid_exists = await self.get_cart_by_user_id(cart.user_id)        
-            return valid_exists
+            db_cart = await self.get_cart_by_user_id(cart.user_id)
+            db_cart.cupoms_id = cart.cupoms_id
+            self.session.add(db_cart)
+            await self.session.commit()
+            return db_cart
         except GenericNotFoundException:
             self.session.add(cart)
             await self.session.commit()
