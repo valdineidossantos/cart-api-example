@@ -1,9 +1,10 @@
 
 
-from app.database.database_helper import Base
 from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+
+from app.database.database_helper import Base
 
 
 class Cart(Base):
@@ -19,9 +20,6 @@ class Cart(Base):
     cupoms_id = Column(ForeignKey('cupoms.id'), index=True)
     cupoms = relationship("Cupom", back_populates="cupoms")
     
-    
-    
-
     def __repr__(self):
         cupoms= self.cupoms if self.cupoms else None
         return "<Cart(id='%s', user_id='%s', finish_at='%s' , items ='%s',  cupoms='%s')>" % (
@@ -29,8 +27,7 @@ class Cart(Base):
                 self.user_id, 
                 self.finish_at, 
                 self.items,                
-                cupoms
-                
+                cupoms                
             )
 
     @property
