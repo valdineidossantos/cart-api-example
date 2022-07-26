@@ -1,5 +1,5 @@
-import datetime
-from enum import Enum
+
+
 from typing import Union
 
 from pydantic import BaseModel, validator
@@ -53,22 +53,27 @@ class CartSchemaResquest(BaseModel):
 
 #Responses
 class ItemSchemaResponse(BaseModel):
-    id: int
-    product_id: int
-    quantity: int 
-
     
+     product_id: int
+     quantity: int 
 
-class CartSchemaResponse(BaseModel):
-    id: int
-    user_id: int
-    items: Union[list[ItemSchemaResponse], None]
+class CupomReponse(BaseModel):
+    name: str
+    discount: float
+    active: bool
+    
     class Config:
-            orm_mode = True
-
+        orm_mode = True
 
 class CartSchemaResponse(BaseModel):
-    carts: list[CartSchemaResponse]
+    user_id: int
+    cupoms: CupomReponse
+    items: list[ItemSchemaResponse]
+          
+
+    class Config:
+        orm_mode = True
+
 
 class ItemSchemaResquestUpdate(BaseModel):
     product_id: int

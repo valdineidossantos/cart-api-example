@@ -1,11 +1,9 @@
-from email.policy import default
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 
 from app.database.database_helper import Base
-from app.models.item_model import Item
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
 
 
 class Cart(Base):
@@ -25,13 +23,14 @@ class Cart(Base):
     
 
     def __repr__(self):
-        return "<Cart(id='%s', user_id='%s', finish_at='%s' , items ='%s', cupoms_id='%s', cupoms='%s')>" % (
+        cupoms= self.cupoms if self.cupoms else None
+        return "<Cart(id='%s', user_id='%s', finish_at='%s' , items ='%s',  cupoms='%s')>" % (
                 self.id, 
                 self.user_id, 
                 self.finish_at, 
-                self.items,
-                self.cupoms_id,
-                self.cupoms,
+                self.items,                
+                cupoms
+                
             )
 
     @property
