@@ -1,12 +1,14 @@
 
 
 from typing import Union
-from sqlalchemy.exc import NoResultFound    
+
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import UserNotFound
 from app.models.user_model import User
 from app.repository.base_repository import BaseRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class UserRepository(BaseRepository):

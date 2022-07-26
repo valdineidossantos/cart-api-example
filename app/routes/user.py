@@ -1,16 +1,13 @@
-from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import GenericNotFoundException, UserNotFound
-
-from app.repository.user_repository import UserRepository
 #from app.schemas.User_schemas import UserCreate, UserUpdate
-from fastapi import APIRouter, Depends,  HTTPException, status
-
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-
+from app.database.database_helper import db_session
+from app.helpers.exceptions_helper import (GenericNotFoundException,
+                                           UserNotFound)
 from app.models.user_model import User
+from app.repository.user_repository import UserRepository
 from app.schemas.user_schemas import UserCreate, UserUpdate
-
 
 router = APIRouter(
     prefix="/v1/users",

@@ -1,6 +1,8 @@
 from enum import Enum
 from typing import Union
+
 from pydantic import BaseModel, validator
+
 
 #This categories need return from database
 class Categories_Mock(str, Enum):

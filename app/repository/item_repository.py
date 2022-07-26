@@ -2,14 +2,15 @@
 
 
 from typing import Union
+
 from sqlalchemy import and_, delete, select
-from sqlalchemy.exc import NoResultFound    
+from sqlalchemy.exc import NoResultFound
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import GenericNotFoundException
 from app.models.item_model import Item
-
 from app.repository.base_repository import BaseRepository
-from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ItemRepository(BaseRepository):
@@ -34,7 +35,7 @@ class ItemRepository(BaseRepository):
         
     async def delete_all_items_by_cart_id(self, cart_id):
         await self.session.execute(delete(self.model).where(self.model.cart_id == cart_id))
-        self.session.commit()
+        await self.session.commit()
     
     async def delete_item(self, cart_id, product_id):
         stmt = delete(self.model).where(

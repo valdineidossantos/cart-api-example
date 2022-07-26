@@ -1,13 +1,14 @@
 from typing import Union
 
+from asyncpg.exceptions import UniqueViolationError
 from sqlalchemy import all_, and_, func, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from asyncpg.exceptions import UniqueViolationError
+
 from app.database.database_helper import Base
-from app.helpers.exceptions_helper import (GenericNotFoundException,
-                                           DuplicatedItemException)
+from app.helpers.exceptions_helper import (DuplicatedItemException,
+                                           GenericNotFoundException)
 from app.models.cupom_model import Cupom
 from app.models.item_model import Item
 from app.repository.base_repository import BaseRepository
@@ -22,7 +23,7 @@ class CupomRepository(  BaseRepository ):
     async def create(self, cupom: Cupom) -> Union[Cupom, None]:
         cupom_repository = CupomRepository(self.session, Cupom)
         cupom.name = cupom.name.upper()
-        from  sqlalchemy.exc import IntegrityError
+        from sqlalchemy.exc import IntegrityError
         try:
             self.session.add(cupom)
             await self.session.commit()

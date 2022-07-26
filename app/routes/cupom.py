@@ -3,11 +3,10 @@ from secretstorage import Item
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import GenericNotFoundException, DuplicatedItemException
+from app.helpers.exceptions_helper import (DuplicatedItemException,
+                                           GenericNotFoundException)
 from app.models.cupom_model import Cupom
-
 from app.repository.cupom_repository import CupomRepository
-
 from app.schemas.cupom_schemas import CupomRequest
 
 router = APIRouter(
