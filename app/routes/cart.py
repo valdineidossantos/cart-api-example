@@ -18,7 +18,12 @@ router = APIRouter(
     tags=["cart"]
 )
 
-@router.get("/{user_id}", status_code=status.HTTP_200_OK, response_model=CartSchemaResponse)
+@router.get("/{user_id}", 
+            status_code=status.HTTP_200_OK, 
+            response_model=CartSchemaResponse,
+            summary="Request User Cart",
+            description="Request User Cart basead on user identityfication",
+            )
 async def get_cart_by_user_id( user_id: int, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
     try:
@@ -33,7 +38,12 @@ async def get_cart_by_user_id( user_id: int, db_session: AsyncSession = Depends(
     except GenericNotFoundException:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
 
-@router.post("/",  status_code=status.HTTP_201_CREATED, response_model=None)
+@router.post("/",  
+    status_code=status.HTTP_201_CREATED, 
+    response_model=None,
+    summary="Create a User Cart",
+    description="Create a User Cart sended by body",
+    )
 async def create_cart( new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
     item_repository = ItemRepository (db_session, ItemCart)
@@ -65,7 +75,11 @@ async def create_cart( new_cart: CartCreate, db_session: AsyncSession = Depends(
         new_item.cart = database_cart
         database_item.append(await item_repository.create(new_item))
 
-@router.put("/{cart_id}",  status_code=status.HTTP_200_OK, response_model=None)
+@router.put("/{cart_id}",  
+        status_code=status.HTTP_200_OK, 
+        response_model=None,
+        summary="Update a Cart",
+        description="Update a Cart based in cart identityfication sended update data by body")
 async def update_cart(cart_id: int, new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
 
@@ -78,7 +92,12 @@ async def update_cart(cart_id: int, new_cart: CartCreate, db_session: AsyncSessi
     return await create_cart(new_cart, db_session)
 
 
-@router.post("/{cart_id}",  status_code=status.HTTP_200_OK, response_model=None)
+@router.post("/{cart_id}",  
+            status_code=status.HTTP_200_OK, 
+            response_model=None,
+            summary="Adding a product in Cart",
+            description="Update a Cart based in cart identityfication sended update data by body")
+            
 async def add_product_in_cart(cart_id: int, item_cart: ItemSchemaResquestUpdate, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
     cart = await cart_repository.get_by_id(cart_id)
@@ -94,7 +113,11 @@ async def add_product_in_cart(cart_id: int, item_cart: ItemSchemaResquestUpdate,
     result = await item_repository.create(new_item)   
     return result
 
-@router.delete("/{cart_id}/{product_id}",  status_code=status.HTTP_204_NO_CONTENT, response_model=None)
+@router.delete("/{cart_id}/{product_id}",  
+        status_code=status.HTTP_204_NO_CONTENT, 
+        response_model=None,
+        summary="Delete a product in Cart",
+        description="Delete the product in Cart based in cart identityfication and product identityfication")
 async def delete_product_in_cart(cart_id: int, product_id: int, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
     item_repository = ItemRepository (db_session, ItemCart)
@@ -105,7 +128,12 @@ async def delete_product_in_cart(cart_id: int, product_id: int, db_session: Asyn
 
     await item_repository.delete_item(cart_id, product_id)
 
-@router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT, response_model=None)
+@router.delete("/{user_id}", 
+            status_code=status.HTTP_204_NO_CONTENT, 
+            response_model=None,
+            summary="Delete a Cart",
+            description="Delete a user cart and delete all product in this Cart")
+            
 async def clear_user_cart( user_id: int, db_session: AsyncSession = Depends(db_session)):
     cart_repository = CartRepository (db_session, Cart)
     await cart_repository.clean_cart(user_id)

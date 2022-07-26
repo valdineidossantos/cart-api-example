@@ -58,7 +58,6 @@ async def update_User(update_user: UserUpdate, user_id: int, db_session: AsyncSe
         email=update_user.email, 
         active=update_user.active,
         id=user_id
-
     )
     try:        
         return await user_repository.update(user)

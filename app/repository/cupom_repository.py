@@ -1,18 +1,13 @@
 from typing import Union
 
-
 from sqlalchemy import select
-
 from sqlalchemy.ext.asyncio import AsyncSession
-
 
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import (DuplicatedItemException,
                                            GenericNotFoundException)
 from app.models.cupom_model import Cupom
 from app.repository.base_repository import BaseRepository
-
-
 
 
 class CupomRepository(  BaseRepository ):

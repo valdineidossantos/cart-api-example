@@ -2,6 +2,10 @@
 
 from typing import Union
 
+from sqlalchemy import all_, and_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import GenericNotFoundException
 from app.models.cart_model import Cart
@@ -9,9 +13,6 @@ from app.models.cupom_model import Cupom
 from app.models.item_model import Item
 from app.repository.base_repository import BaseRepository
 from app.repository.item_repository import ItemRepository
-from sqlalchemy import all_, and_, select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 
 class CartRepository(  BaseRepository ):
