@@ -1,5 +1,3 @@
-
-
 from typing import Union
 
 from sqlalchemy import all_, and_, select
@@ -35,11 +33,11 @@ class CartRepository(BaseRepository):
 
     async def get_by_id(self, cart_id: int) -> Union[Base, None]:
 
-        stmt = select(
-            self.model).where(
-            self.model.id == cart_id).options(
-            selectinload(
-                Cart.items))
+        stmt = (
+            select(self.model)
+            .where(self.model.id == cart_id)
+            .options(selectinload(Cart.items))
+        )
         stream = await self.session.execute(stmt)
         result = stream.scalars().first()
         if result:
@@ -49,7 +47,9 @@ class CartRepository(BaseRepository):
         return await self.create_cart(cart)
 
     async def clean_cart(self, user_id: int) -> bool:
-        result = await self.session.execute(select(self.model).where(self.model.user_id == user_id))
+        result = await self.session.execute(
+            select(self.model).where(self.model.user_id == user_id)
+        )
         delete_cart = result.fetchone()
 
         # Cart found
@@ -66,14 +66,15 @@ class CartRepository(BaseRepository):
 
     async def get_cart_by_user_id(self, user_id: int) -> Union[Base, None]:
 
-        stmt = select(Cart, Item, Cupom).where(
-            and_(
-                Cart.finish_at is None,
-                Cart.user_id == user_id,
+        stmt = (
+            select(Cart, Item, Cupom)
+            .where(
+                and_(
+                    Cart.finish_at is None,
+                    Cart.user_id == user_id,
+                )
             )
-        ).options(
-            selectinload(Cart.items),
-            selectinload(Cart.cupoms)
+            .options(selectinload(Cart.items), selectinload(Cart.cupoms))
         )
 
         stream = await self.session.execute(stmt)
@@ -83,8 +84,8 @@ class CartRepository(BaseRepository):
         raise GenericNotFoundException(message="Cart not found")
 
     async def get_all(self) -> list:
-        stmt = select(Cart).where(
-            Cart.finish_at is None
-        ).options(selectinload(Cart.items))
+        stmt = (
+            select(Cart).where(Cart.finish_at is None).options(selectinload(Cart.items))
+        )
         stream = await self.session.execute(stmt)
         return stream.scalars().all()

@@ -4,8 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_helper import Base
-from app.helpers.exceptions_helper import (DuplicatedItemException,
-                                           GenericNotFoundException)
+from app.helpers.exceptions_helper import (
+    DuplicatedItemException,
+    GenericNotFoundException,
+)
 from app.models.cupom_model import Cupom
 from app.repository.base_repository import BaseRepository
 
@@ -17,6 +19,7 @@ class CupomRepository(BaseRepository):
     async def create(self, cupom: Cupom) -> Union[Cupom, None]:
         cupom.name = cupom.name.upper()
         from sqlalchemy.exc import IntegrityError
+
         try:
             self.session.add(cupom)
             await self.session.commit()
@@ -24,7 +27,8 @@ class CupomRepository(BaseRepository):
         except (IntegrityError):
             self.session.rollback()
             raise DuplicatedItemException(
-                message=f"Cupom already created [{cupom.name.upper()}]")
+                message=f"Cupom already created [{cupom.name.upper()}]"
+            )
 
     async def update(self, cupom: Cupom) -> Union[Cupom, None]:
         stmt = select(self.model).where(self.model.id == cupom.id)
@@ -42,7 +46,8 @@ class CupomRepository(BaseRepository):
             except IntegrityError:
                 self.session.rollback()
                 raise DuplicatedItemException(
-                    message=f"Cupom already created [{cupom.name.upper()}]")
+                    message=f"Cupom already created [{cupom.name.upper()}]"
+                )
 
         raise GenericNotFoundException(message="Cupom not found")
 

@@ -1,5 +1,3 @@
-
-
 from typing import Union
 
 from pydantic import BaseModel, validator
@@ -9,10 +7,10 @@ class Items(BaseModel):
     product_id: int
     quantity: int
 
-    @validator('quantity')
+    @validator("quantity")
     def quantity_greatter_zero(cls, v):
         if v < 1:
-            raise ValueError('Quantity must be greater than zero')
+            raise ValueError("Quantity must be greater than zero")
         return v
 
     class Config:
@@ -29,23 +27,23 @@ class CartCreate(BaseModel):
 
 
 class CartUpdate(CartCreate):
-
     class Config:
         orm_mode = True
 
 
-class ItemSchemaResquest (BaseModel):
+class ItemSchemaResquest(BaseModel):
     def __init__(self, product_id: int, quantity: int, cart_id: int):
         self.product_id = product_id
         self.quantity = quantity
         self.cart_id = cart_id
+
     product_id: int
     quantity: int
 
-    @validator('quantity')
+    @validator("quantity")
     def quantity_greatter_zero(cls, v):
         if v < 1:
-            raise ValueError('Quantity must be greater than zero')
+            raise ValueError("Quantity must be greater than zero")
         return v
 
 
@@ -54,6 +52,7 @@ class CartSchemaResquest(BaseModel):
     user_id: int
     finish_at: bool
     items: list[ItemSchemaResquest]
+
 
 # Responses
 
@@ -86,10 +85,10 @@ class ItemSchemaResquestUpdate(BaseModel):
     product_id: int
     quantity: int
 
-    @validator('quantity')
+    @validator("quantity")
     def quantity_greatter_zero(cls, v):
         if v < 1:
-            raise ValueError('Quantity must be greater than zero')
+            raise ValueError("Quantity must be greater than zero")
         return v
 
     class Config:

@@ -24,10 +24,10 @@ class ProductCreate(BaseModel):
     in_stock: Union[bool, None] = True
     quantity_stock: int = 0
 
-    @validator('quantity_stock')
+    @validator("quantity_stock")
     def quantity_stock_greatter_zero(cls, v):
         if v < 0:
-            raise ValueError('Quantity stock must be greater than zero')
+            raise ValueError("Quantity stock must be greater than zero")
         return v
 
     class Config:
@@ -35,6 +35,5 @@ class ProductCreate(BaseModel):
 
 
 class ProductUpdate(ProductCreate):
-
     class Config:
         orm_mode = True
