@@ -11,8 +11,6 @@ services:
       - .:/app/src
     links:
       - db
-    stdin_open: true # Add this line into your service
-    tty: true # Add this line into your service
 
   db:
     image: postgres:13.4-buster

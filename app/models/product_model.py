@@ -15,3 +15,19 @@ class Product(Base):
     price = Column(Float, nullable=False)
     in_stock = Column(Boolean, default=True)
     quantity_stock = Column(Integer, nullable=False)
+
+    def __repr__(self):
+        return (
+            "<Product(id='%s', name='%s', short_name='%s', description='%s', active='%s', category='%s', price='%s', in_stock='%s', quantity_stock='%s')>"
+            % (
+                self.id,
+                self.name,
+                self.short_name,
+                self.description,
+                self.active,
+                self.category,
+                self.price,
+                self.in_stock,
+                self.quantity_stock,
+            )
+        )

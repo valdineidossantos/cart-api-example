@@ -6,15 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.database.database_helper import db_session
 from app.helpers.exceptions_helper import GenericNotFoundException
 from app.mock_services.cupom_service import get_cupom_params_by_name
+from app.mock_services.product_service import get_product_params_by_id
 from app.models.cart_model import Cart
 from app.models.item_model import Item as ItemCart
 from app.repository.cart_repository import CartRepository
 from app.repository.item_repository import ItemRepository
-from app.schemas.cart_schemas import (
-    CartCreate,
-    CartSchemaResponse,
-    ItemSchemaResquestUpdate,
-)
+from app.schemas.cart_schemas import (CartCreate, CartSchemaResponse,
+                                      ItemSchemaResquestUpdate)
 
 router = APIRouter(prefix="/v1/cart", tags=["cart"])
 
@@ -40,11 +38,39 @@ async def get_cart_by_user_id(
                 {"product_id": x.product_id, "quantity": x.quantity} for x in cart.items
             ],
         }
+
+        return_cart["items"] = await get_last_product_params(
+            db_session, return_cart["items"]
+        )
+
+        return_cart["sub_total"] = sum(
+            [x["product"].price * x["quantity"] for x in return_cart["items"]]
+        )
+
+        if cart.cupoms:
+            cupom = await get_cupom_params_by_name(cart.cupoms.name, db_session)
+            return_cart["discount"] = cupom.discount
+            return_cart["total"] = return_cart["sub_total"] - cupom.discount
+        else:
+            return_cart["total"] = return_cart["sub_total"]
         return return_cart
     except GenericNotFoundException:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found"
         )
+
+
+async def get_last_product_params(db_session, items):
+    all_products = []
+    for item in items:
+        product = dict(await get_product_params_by_id(item["product_id"], db_session))
+        product["product_id"] = product.get("Product").id
+        product["quantity"] = item["quantity"]
+        product["product"] = product.get("Product")
+        del product["Product"]
+        all_products.append(product)
+
+    return all_products
 
 
 @router.post(
@@ -59,6 +85,7 @@ async def create_cart(
 ):
     cart_repository = CartRepository(db_session, Cart)
     item_repository = ItemRepository(db_session, ItemCart)
+    db_cupom = None
     try:
         # Validate CUPOM
         if new_cart.cupom:
@@ -73,9 +100,9 @@ async def create_cart(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Cupom not found"
         )
-
-    cupoms_id = db_cupom.id if db_cupom.id else None
+    cupoms_id = db_cupom.id if db_cupom else None
     cart = Cart(user_id=new_cart.user_id, cupoms_id=cupoms_id)
+
     database_cart = await cart_repository.create(cart)
 
     database_item = []
