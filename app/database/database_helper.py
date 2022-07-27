@@ -2,12 +2,8 @@ from asyncio import current_task
 from contextlib import asynccontextmanager
 from functools import lru_cache
 
-from sqlalchemy.ext.asyncio import (
-    AsyncEngine,
-    AsyncSession,
-    async_scoped_session,
-    create_async_engine,
-)
+from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
+                                    async_scoped_session, create_async_engine)
 from sqlalchemy.orm import configure_mappers, declarative_base, sessionmaker
 
 host = "cart_api_example_db"

@@ -1,6 +1,6 @@
 from typing import Union
 
-from sqlalchemy.ext.asyncio import AsyncScalarResult, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import ProductNotFound

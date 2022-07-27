@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 from pydantic import BaseModel, validator
 
@@ -57,32 +57,49 @@ class CartSchemaResquest(BaseModel):
 # Responses
 
 
-class ItemSchemaResponse(BaseModel):
-
-    product_id: int
-    quantity: int
-
-
 class CupomReponse(BaseModel):
     name: str
     discount: float
-    active: bool
 
     class Config:
         orm_mode = True
 
 
+class ProductResponse(BaseModel):
+    # id: int
+    # active: bool
+    name: str
+    short_name: str
+    price: float
+    quantity_stock: int
+    description: str
+    category: str
+    in_stock: bool
+
+    class Config:
+        orm_mode = True
+
+
+class ItemSchemaResponse(BaseModel):
+    product_id: int
+    quantity: int
+    product: ProductResponse
+
+
 class CartSchemaResponse(BaseModel):
     user_id: int
-    cupoms: CupomReponse
-    items: list[ItemSchemaResponse]
+    cupoms: Union[CupomReponse, None]
+    items: list[Union[ItemSchemaResponse, None]]
+    sub_total: Union[float, None]
+    total: Union[float, None]
+    discount: Union[float, None]
 
     class Config:
         orm_mode = True
 
 
 class ItemSchemaResquestUpdate(BaseModel):
-    product_id: int
+    product: ProductResponse
     quantity: int
 
     @validator("quantity")
