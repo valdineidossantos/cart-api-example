@@ -10,10 +10,10 @@ class CupomRequest(BaseModel):
     discount: float
     active: bool = True
 
-    @validator('discount')
+    @validator("discount")
     def quantity_greatter_zero(cls, v):
         if v < 1:
-            raise ValueError('Discount value must be greater than zero')
+            raise ValueError("Discount value must be greater than zero")
         return v
 
     class Config:

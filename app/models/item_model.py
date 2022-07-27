@@ -16,7 +16,7 @@ class Item(Base):
 
     product_id = Column(Integer, nullable=False, index=True)
     quantity = Column(Integer, nullable=False)
-    cart_id = Column(ForeignKey('carts.id'), index=True)
+    cart_id = Column(ForeignKey("carts.id"), index=True)
     cart = relationship("Cart", back_populates="items")
 
     def __repr__(self):
@@ -25,5 +25,4 @@ class Item(Base):
             self.product_id,
             self.quantity,
             self.cart_id,
-
         )

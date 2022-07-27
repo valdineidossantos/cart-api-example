@@ -19,13 +19,17 @@ class BaseRepository:
 
     async def get_by_id(self, requested_id: int) -> Union[Base, None]:
         try:
-            result = await self.session.execute(select(self.model).where(self.model.id == requested_id))
+            result = await self.session.execute(
+                select(self.model).where(self.model.id == requested_id)
+            )
             return result.one()
         except NoResultFound as nrf:
             raise GenericNotFoundException(message=str(nrf))
 
     async def delete(self, requested_id: int) -> bool:
-        result = await self.session.execute(select(self.model).where(self.model.id == requested_id))
+        result = await self.session.execute(
+            select(self.model).where(self.model.id == requested_id)
+        )
         delete_item = result.fetchone()
 
         if delete_item:

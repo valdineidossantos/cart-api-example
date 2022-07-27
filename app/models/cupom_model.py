@@ -19,5 +19,5 @@ class Cupom(Base):
             self.id,
             self.name,
             self.discount,
-            self.active
+            self.active,
         )
