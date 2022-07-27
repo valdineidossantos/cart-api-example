@@ -6,12 +6,11 @@ from sqlalchemy.ext.asyncio import (AsyncEngine, AsyncSession,
                                     async_scoped_session, create_async_engine)
 from sqlalchemy.orm import configure_mappers, declarative_base, sessionmaker
 
-host="cart_api_example_db"
-user="cart-api-example-user"
-password="ultra-secret-password123"
-db_name="cart-api-example-db"
-Base=declarative_base()
-
+host = "cart_api_example_db"
+user = "cart-api-example-user"
+password = "ultra-secret-password123"
+db_name = "cart-api-example-db"
+Base = declarative_base()
 
 
 class DBSession:
@@ -24,7 +23,8 @@ class DBSession:
 
     @lru_cache
     def get_async_engine(self) -> AsyncEngine:
-        async_engine = create_async_engine(f"postgresql+asyncpg://{user}:{password}@{host}/{db_name}", echo=True)
+        async_engine = create_async_engine(
+            f"postgresql+asyncpg://{user}:{password}@{host}/{db_name}", echo=True)
         configure_mappers()
         return async_engine
 
@@ -52,4 +52,3 @@ class DBSession:
 
 
 db_session = DBSession()
-

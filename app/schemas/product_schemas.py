@@ -4,7 +4,7 @@ from typing import Union
 from pydantic import BaseModel, validator
 
 
-#This categories need return from database
+# This categories need return from database
 class Categories_Mock(str, Enum):
     Eletronics = "Eletronics"
     Books = "Books"
@@ -12,8 +12,6 @@ class Categories_Mock(str, Enum):
     Clothes = "Clothes"
     Sports = "Sports"
     Others = "Others"
-
-   
 
 
 class ProductCreate(BaseModel):
@@ -34,6 +32,7 @@ class ProductCreate(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class ProductUpdate(ProductCreate):
 

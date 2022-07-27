@@ -16,6 +16,5 @@ class CupomRequest(BaseModel):
             raise ValueError('Discount value must be greater than zero')
         return v
 
-
     class Config:
         orm_mode = True

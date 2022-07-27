@@ -14,13 +14,13 @@ from app.repository.base_repository import BaseRepository
 class UserRepository(BaseRepository):
     def __init__(self, session: AsyncSession, model: Base):
         super().__init__(session, model)
-    
-    async def create(self, user: User) -> Union[User, None]:       
+
+    async def create(self, user: User) -> Union[User, None]:
         self.session.add(user)
         await self.session.commit()
         return user
-    
-    async def update(self, user: User) -> Union[User, None]:       
+
+    async def update(self, user: User) -> Union[User, None]:
 
         try:
             database_user = await self.get_by_id(user.id)
@@ -33,5 +33,5 @@ class UserRepository(BaseRepository):
                 self.session.add(database_user)
                 await self.session.commit()
                 return database_user
-        except NoResultFound:    
+        except NoResultFound:
             raise UserNotFound("User not found")

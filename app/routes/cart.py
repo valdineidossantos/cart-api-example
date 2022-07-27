@@ -18,46 +18,54 @@ router = APIRouter(
     tags=["cart"]
 )
 
-@router.get("/{user_id}", 
-            status_code=status.HTTP_200_OK, 
+
+@router.get("/{user_id}",
+            status_code=status.HTTP_200_OK,
             response_model=CartSchemaResponse,
             summary="Request User Cart",
             description="Request User Cart basead on user identityfication",
             )
-async def get_cart_by_user_id( user_id: int, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
+async def get_cart_by_user_id(user_id: int, db_session: AsyncSession = Depends(db_session)):
+    cart_repository = CartRepository(db_session, Cart)
     try:
         cart = await cart_repository.get_cart_by_user_id(user_id)
-        
+
         return_cart = {
             "user_id": cart.user_id,
             "cupoms": cart.cupoms,
-            "items": [{"product_id":x.product_id, "quantity":x.quantity} for x in cart.items]
+            "items": [{"product_id": x.product_id, "quantity": x.quantity} for x in cart.items]
         }
         return return_cart
     except GenericNotFoundException:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cart not found")
 
-@router.post("/",  
-    status_code=status.HTTP_201_CREATED, 
-    response_model=None,
-    summary="Create a User Cart",
-    description="Create a User Cart sended by body",
-    )
-async def create_cart( new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
-    item_repository = ItemRepository (db_session, ItemCart)
+
+@router.post("/",
+             status_code=status.HTTP_201_CREATED,
+             response_model=None,
+             summary="Create a User Cart",
+             description="Create a User Cart sended by body",
+             )
+async def create_cart(new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
+    cart_repository = CartRepository(db_session, Cart)
+    item_repository = ItemRepository(db_session, ItemCart)
     try:
-        #Validate CUPOM 
-        if new_cart.cupom: 
+        # Validate CUPOM
+        if new_cart.cupom:
             db_cupom = await get_cupom_params_by_name(new_cart.cupom, db_session)
-            
-            if not db_cupom.active:                        
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cupom not valid")
+
+            if not db_cupom.active:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cupom not valid")
             delattr(new_cart, 'cupom')
     except GenericNotFoundException:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Cupom not found")
-    
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cupom not found")
+
     cupoms_id = db_cupom.id if db_cupom.id else None
     cart = Cart(
         user_id=new_cart.user_id,
@@ -75,67 +83,71 @@ async def create_cart( new_cart: CartCreate, db_session: AsyncSession = Depends(
         new_item.cart = database_cart
         database_item.append(await item_repository.create(new_item))
 
-@router.put("/{cart_id}",  
-        status_code=status.HTTP_200_OK, 
-        response_model=None,
-        summary="Update a Cart",
-        description="Update a Cart based in cart identityfication sended update data by body")
-async def update_cart(cart_id: int, new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
 
-    
-    
+@router.put("/{cart_id}",
+            status_code=status.HTTP_200_OK,
+            response_model=None,
+            summary="Update a Cart",
+            description="Update a Cart based in cart identityfication sended update data by body")
+async def update_cart(cart_id: int, new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)):
+    cart_repository = CartRepository(db_session, Cart)
+
     cart = await cart_repository.get_by_id(cart_id)
     if not cart:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cart not found")
+
     return await create_cart(new_cart, db_session)
 
 
-@router.post("/{cart_id}",  
-            status_code=status.HTTP_200_OK, 
-            response_model=None,
-            summary="Adding a product in Cart",
-            description="Update a Cart based in cart identityfication sended update data by body")
-            
+@router.post("/{cart_id}",
+             status_code=status.HTTP_200_OK,
+             response_model=None,
+             summary="Adding a product in Cart",
+             description="Update a Cart based in cart identityfication sended update data by body")
 async def add_product_in_cart(cart_id: int, item_cart: ItemSchemaResquestUpdate, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
+    cart_repository = CartRepository(db_session, Cart)
     cart = await cart_repository.get_by_id(cart_id)
     if not cart:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
-    
-    item_repository = ItemRepository (db_session, ItemCart)
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cart not found")
+
+    item_repository = ItemRepository(db_session, ItemCart)
     db_item = await item_repository.get_items_by_product_id(cart_id, item_cart.product_id)
     new_item = ItemCart()
     new_item.cart_id = cart_id
     new_item.product_id = item_cart.product_id
     new_item.quantity = item_cart.quantity
-    result = await item_repository.create(new_item)   
+    result = await item_repository.create(new_item)
     return result
 
-@router.delete("/{cart_id}/{product_id}",  
-        status_code=status.HTTP_204_NO_CONTENT, 
-        response_model=None,
-        summary="Delete a product in Cart",
-        description="Delete the product in Cart based in cart identityfication and product identityfication")
+
+@router.delete("/{cart_id}/{product_id}",
+               status_code=status.HTTP_204_NO_CONTENT,
+               response_model=None,
+               summary="Delete a product in Cart",
+               description="Delete the product in Cart based in cart identityfication and product identityfication")
 async def delete_product_in_cart(cart_id: int, product_id: int, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
-    item_repository = ItemRepository (db_session, ItemCart)
+    cart_repository = CartRepository(db_session, Cart)
+    item_repository = ItemRepository(db_session, ItemCart)
 
     cart = await cart_repository.get_by_id(cart_id)
     if not cart:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cart not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Cart not found")
 
     await item_repository.delete_item(cart_id, product_id)
 
-@router.delete("/{user_id}", 
-            status_code=status.HTTP_204_NO_CONTENT, 
-            response_model=None,
-            summary="Delete a Cart",
-            description="Delete a user cart and delete all product in this Cart")
-            
-async def clear_user_cart( user_id: int, db_session: AsyncSession = Depends(db_session)):
-    cart_repository = CartRepository (db_session, Cart)
+
+@router.delete("/{user_id}",
+               status_code=status.HTTP_204_NO_CONTENT,
+               response_model=None,
+               summary="Delete a Cart",
+               description="Delete a user cart and delete all product in this Cart")
+async def clear_user_cart(user_id: int, db_session: AsyncSession = Depends(db_session)):
+    cart_repository = CartRepository(db_session, Cart)
     await cart_repository.clean_cart(user_id)
     return False
-
