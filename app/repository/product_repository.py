@@ -13,14 +13,14 @@ from app.repository.base_repository import BaseRepository
 class ProductRepository(BaseRepository):
     def __init__(self, session: AsyncSession, model: Base):
         super().__init__(session, model)
-    
+
     async def create(self, product: Product) -> Union[Product, None]:
         self.session.add(product)
         await self.session.commit()
         return product
-    
+
     async def update(self, product: Product) -> Union[Product, None]:
-        
+
         database_product = await self.get_by_id(product.id)
 
         if database_product:
@@ -34,5 +34,5 @@ class ProductRepository(BaseRepository):
             self.session.add(database_product)
             await self.session.commit()
             return database_product
-        
+
         raise ProductNotFound("Product not found")

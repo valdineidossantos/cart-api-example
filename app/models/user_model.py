@@ -10,7 +10,3 @@ class User(Base):
     name = Column(String(length=200), nullable=False)
     email = Column(String(length=100), nullable=False, index=True)
     active = Column(Boolean, default=True)
-    
-        
-
-

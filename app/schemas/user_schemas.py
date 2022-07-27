@@ -4,21 +4,20 @@ from typing import Union
 
 from pydantic import BaseModel, validator
 
-regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'  
-  
-def valid_email(email):   
-  
-    if(re.search(regex,email)):   
+regex = '^[a-z0-9]+[\\._]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$'
+
+
+def valid_email(email):
+
+    if(re.search(regex, email)):
         return True
     return False
-   
 
 
 class UserCreate(BaseModel):
     name: str
     email: str
     active: Union[bool, None] = True
-    
 
     @validator('email')
     def validate_email(cls, v):
@@ -28,6 +27,7 @@ class UserCreate(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class UserUpdate(UserCreate):
 

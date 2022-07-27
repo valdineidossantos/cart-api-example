@@ -18,6 +18,7 @@ from app.schemas.product_schemas import ProductCreate, ProductUpdate
 def get_db():
     return db_session
 
+
 def get_app():
     app = FastAPI()
     app.include_router(product_router)
@@ -26,12 +27,10 @@ def get_app():
     app.include_router(cupom_router)
     return app
 
+
 app = get_app()
+
 
 @app.get("/")
 async def read_root():
     return "Start Page"
-
-
-
-

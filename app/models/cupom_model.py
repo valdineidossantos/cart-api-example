@@ -21,7 +21,3 @@ class Cupom(Base):
             self.discount,
             self.active
         )
-    
-        
-
-

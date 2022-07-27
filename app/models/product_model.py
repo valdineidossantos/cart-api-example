@@ -15,6 +15,3 @@ class Product(Base):
     price = Column(Float, nullable=False)
     in_stock = Column(Boolean, default=True)
     quantity_stock = Column(Integer, nullable=False)
-        
-
-
