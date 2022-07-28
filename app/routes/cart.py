@@ -50,7 +50,8 @@ async def get_cart_by_user_id(
         if cart.cupoms:
             cupom = await get_cupom_params_by_name(cart.cupoms.name, db_session)
             return_cart["discount"] = cupom.discount
-            return_cart["total"] = return_cart["sub_total"] - cupom.discount
+            discount = return_cart["sub_total"] - cupom.discount
+            return_cart["total"] = discount if discount > 0 else 0
         else:
             return_cart["total"] = return_cart["sub_total"]
         return return_cart
