@@ -1,11 +1,10 @@
 from typing import Union
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.database.database_helper import Base
 from app.helpers.exceptions_helper import ProductNotFound
 from app.models.product_model import Product
 from app.repository.base_repository import BaseRepository
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class ProductRepository(BaseRepository):
@@ -28,6 +27,8 @@ class ProductRepository(BaseRepository):
             database_product.description = product.description
             database_product.category = product.category
             database_product.price = product.price
+            database_product.in_stock = product.in_stock
+            database_product.quantity_stock = product.quantity_stock
 
             self.session.add(database_product)
             await self.session.commit()
