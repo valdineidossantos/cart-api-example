@@ -16,3 +16,8 @@ class UserNotFound(Exception):
 class DuplicatedItemException(Exception):
     def __init__(self, message):
         super().__init__(message)
+
+
+class CupomException(Exception):
+    def __init__(self, message):
+        super().__init__(message)
