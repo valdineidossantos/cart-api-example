@@ -1,4 +1,4 @@
-from typing import Any, Union
+from typing import Union
 
 from pydantic import BaseModel, validator
 
@@ -98,7 +98,7 @@ class CartSchemaResponse(BaseModel):
         orm_mode = True
 
 
-class ItemSchemaResquestUpdate(BaseModel):
+class ItemSchemaRequestUpdate(BaseModel):
     product: ProductResponse
     quantity: int
 

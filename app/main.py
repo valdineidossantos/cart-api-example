@@ -1,18 +1,10 @@
-from typing import Union
-from urllib.error import HTTPError
-
-from fastapi import Depends, FastAPI, HTTPException, status
-from sqlalchemy.exc import NoResultFound
+from fastapi import FastAPI
 
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import ProductNotFound
-from app.models.product_model import Product
-from app.repository.product_repository import ProductRepository
 from app.routes.cart import router as cart_router
 from app.routes.cupom import router as cupom_router
 from app.routes.product import router as product_router
 from app.routes.user import router as user_router
-from app.schemas.product_schemas import ProductCreate, ProductUpdate
 
 
 def get_db():

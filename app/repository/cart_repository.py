@@ -1,6 +1,7 @@
 from typing import Union
 
 from sqlalchemy import all_, and_, select
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -19,12 +20,10 @@ class CartRepository(BaseRepository):
         self.item_repository = ItemRepository(session, Item)
 
     async def create(self, cart: Cart) -> Union[Cart, None]:
-
         try:
             db_cart = await self.get_cart_by_user_id(cart.user_id)
             db_cart.cupoms_id = cart.cupoms_id
             self.session.add(db_cart)
-            self.session.is_modified = True
             await self.session.commit()
             await self.session.refresh(db_cart)
             return db_cart
@@ -67,20 +66,21 @@ class CartRepository(BaseRepository):
         return True
 
     async def get_cart_by_user_id(self, user_id: int) -> Union[Base, None]:
-
-        stmt = (
-            select(Cart)
-            .join(Item, isouter=True)
-            .join(Cupom, isouter=True)
-            .where(Cart.user_id == user_id and Cart.finish_at is None)
-            .options(selectinload(Cart.items), selectinload(Cart.cupoms))
-        )
-
-        stream = await self.session.execute(stmt)
-        result = stream.scalars().first()
-        if result:
-            return result
-        raise GenericNotFoundException(message="Cart not found")
+        try:
+            stmt = (
+                select(Cart)
+                .join(Item, isouter=True)
+                .join(Cupom, isouter=True)
+                .where(Cart.user_id == user_id and Cart.finish_at is None)
+                .options(selectinload(Cart.items), selectinload(Cart.cupoms))
+            )
+            stream = await self.session.execute(stmt)
+            result = stream.scalars().first()
+            if result:
+                return result
+            raise GenericNotFoundException(message="Cart not found")
+        except NoResultFound:
+            raise GenericNotFoundException(message="Cart not found")
 
     async def get_all(self) -> list:
         stmt = (

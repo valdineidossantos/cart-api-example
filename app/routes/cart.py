@@ -1,19 +1,20 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import (CupomException,
-                                           GenericNotFoundException)
+from app.helpers.exceptions_helper import CupomException, GenericNotFoundException
 from app.mock_services.cupom_service import get_cupom_params_by_name
 from app.mock_services.product_service import get_product_params_by_id
 from app.models.cart_model import Cart
 from app.models.item_model import Item as ItemCart
 from app.repository.cart_repository import CartRepository
 from app.repository.item_repository import ItemRepository
-from app.schemas.cart_schemas import (CartCreate, CartSchemaResponse,
-                                      ItemSchemaRequestUpdate)
+from app.schemas.cart_schemas import (
+    CartCreate,
+    CartSchemaResponse,
+    ItemSchemaRequestUpdate,
+)
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/v1/cart", tags=["cart"])
 
@@ -105,7 +106,6 @@ async def create_cart(
         )
 
     database_cart = await cart_repository.create(cart)
-
     database_cart.cupoms = cupom
     database_cart.cupoms_id = cupom.id if cupom else None
 
