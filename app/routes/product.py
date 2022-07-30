@@ -1,11 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.database.database_helper import db_session
 from app.helpers.exceptions_helper import GenericNotFoundException
 from app.models.product_model import Product
 from app.repository.product_repository import ProductRepository
 from app.schemas.product_schemas import ProductCreate, ProductUpdate
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter(prefix="/v1/products", tags=["products"])
 
@@ -69,6 +68,7 @@ async def update_product(
         price=update_product.price,
         quantity_stock=update_product.quantity_stock,
         id=product_id,
+        in_stock=update_product.in_stock,
     )
     try:
         return await product_repository.update(product)

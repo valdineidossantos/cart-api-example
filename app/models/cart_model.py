@@ -57,11 +57,13 @@ class Cart(Base):
                 product = product[0]
 
                 if not product.in_stock:
-                    errors.append({"id": product.id, "message": "Item not available"})
+                    errors.append(
+                        {"id": product.id, "message": "Product not available"}
+                    )
 
             except GenericNotFoundException:
                 errors.append(
-                    {"product id": item.product_id, "message": "Item not found"}
+                    {"product id": item.product_id, "message": "Product not found"}
                 )
 
         return errors
