@@ -4,7 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database.database_helper import db_session
-from app.helpers.exceptions_helper import GenericNotFoundException
+from app.helpers.exceptions_helper import (CupomException,
+                                           GenericNotFoundException)
 from app.mock_services.cupom_service import get_cupom_params_by_name
 from app.mock_services.product_service import get_product_params_by_id
 from app.models.cart_model import Cart
@@ -12,7 +13,7 @@ from app.models.item_model import Item as ItemCart
 from app.repository.cart_repository import CartRepository
 from app.repository.item_repository import ItemRepository
 from app.schemas.cart_schemas import (CartCreate, CartSchemaResponse,
-                                      ItemSchemaResquestUpdate)
+                                      ItemSchemaRequestUpdate)
 
 router = APIRouter(prefix="/v1/cart", tags=["cart"])
 
@@ -22,13 +23,14 @@ router = APIRouter(prefix="/v1/cart", tags=["cart"])
     status_code=status.HTTP_200_OK,
     response_model=CartSchemaResponse,
     summary="Request User Cart",
-    description="Request User Cart basead on user identityfication",
+    description="Request User Cart based on user identification",
 )
 async def get_cart_by_user_id(
     user_id: int, db_session: AsyncSession = Depends(db_session)
 ):
     cart_repository = CartRepository(db_session, Cart)
     try:
+
         cart = await cart_repository.get_cart_by_user_id(user_id)
 
         return_cart = {
@@ -50,8 +52,8 @@ async def get_cart_by_user_id(
         if cart.cupoms:
             cupom = await get_cupom_params_by_name(cart.cupoms.name, db_session)
             return_cart["discount"] = cupom.discount
-            discount = return_cart["sub_total"] - cupom.discount
-            return_cart["total"] = discount if discount > 0 else 0
+            applied_discount = return_cart["sub_total"] - cupom.discount
+            return_cart["total"] = applied_discount if applied_discount > 0 else 0
         else:
             return_cart["total"] = return_cart["sub_total"]
         return return_cart
@@ -86,25 +88,26 @@ async def create_cart(
 ):
     cart_repository = CartRepository(db_session, Cart)
     item_repository = ItemRepository(db_session, ItemCart)
-    db_cupom = None
-    try:
-        # Validate CUPOM
-        if new_cart.cupom:
-            db_cupom = await get_cupom_params_by_name(new_cart.cupom, db_session)
 
-            if not db_cupom.active:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST, detail="Cupom not valid"
-                )
-            delattr(new_cart, "cupom")
-    except GenericNotFoundException:
+    cart = Cart(user_id=new_cart.user_id)
+    try:
+        cupom = await cart.validate_cupom_and_apply(new_cart.cupom, db_session)
+    except GenericNotFoundException as ge:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ge))
+    except CupomException as ce:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(ce))
+
+    product_errors = await cart.validate_items(new_cart.items, db_session)
+
+    if product_errors:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Cupom not found"
+            status_code=status.HTTP_400_BAD_REQUEST, detail=product_errors
         )
-    cupoms_id = db_cupom.id if db_cupom else None
-    cart = Cart(user_id=new_cart.user_id, cupoms_id=cupoms_id)
 
     database_cart = await cart_repository.create(cart)
+
+    database_cart.cupoms = cupom
+    database_cart.cupoms_id = cupom.id if cupom else None
 
     database_item = []
     await item_repository.delete_all_items_by_cart_id(database_cart.id)
@@ -116,13 +119,15 @@ async def create_cart(
         new_item.cart = database_cart
         database_item.append(await item_repository.create(new_item))
 
+    await db_session.flush()
+
 
 @router.put(
     "/{cart_id}",
     status_code=status.HTTP_200_OK,
     response_model=None,
     summary="Update a Cart",
-    description="Update a Cart based in cart identityfication sended update data by body",
+    description="Update a Cart based in cart identification sended update data by body",
 )
 async def update_cart(
     cart_id: int, new_cart: CartCreate, db_session: AsyncSession = Depends(db_session)
@@ -143,11 +148,11 @@ async def update_cart(
     status_code=status.HTTP_200_OK,
     response_model=None,
     summary="Adding a product in Cart",
-    description="Update a Cart based in cart identityfication sended update data by body",
+    description="Update a Cart based in cart identification sended update data by body",
 )
 async def add_product_in_cart(
     cart_id: int,
-    item_cart: ItemSchemaResquestUpdate,
+    item_cart: ItemSchemaRequestUpdate,
     db_session: AsyncSession = Depends(db_session),
 ):
     cart_repository = CartRepository(db_session, Cart)
@@ -174,7 +179,7 @@ async def add_product_in_cart(
     status_code=status.HTTP_204_NO_CONTENT,
     response_model=None,
     summary="Delete a product in Cart",
-    description="Delete the product in Cart based in cart identityfication and product identityfication",
+    description="Delete the product in Cart based in cart identification and product identification",
 )
 async def delete_product_in_cart(
     cart_id: int, product_id: int, db_session: AsyncSession = Depends(db_session)
