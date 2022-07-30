@@ -1,14 +1,12 @@
+from app.database.database_helper import Base
+from app.helpers.exceptions_helper import CupomException, GenericNotFoundException
+from app.mock_services.cupom_service import get_cupom_params_by_name
+from app.mock_services.product_service import get_product_params_by_id
+from app.models.product_model import Product
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, select
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-
-from app.database.database_helper import Base
-from app.helpers.exceptions_helper import (CupomException,
-                                           GenericNotFoundException)
-from app.mock_services.cupom_service import get_cupom_params_by_name
-from app.mock_services.product_service import get_product_params_by_id
-from app.models.product_model import Product
 
 
 class Cart(Base):
@@ -56,6 +54,8 @@ class Cart(Base):
         for item in items:
             try:
                 product = await get_product_params_by_id(item.product_id, db_session)
+                product = product[0]
+
                 if not product.in_stock:
                     errors.append({"id": product.id, "message": "Item not available"})
 
