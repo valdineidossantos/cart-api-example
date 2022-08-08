@@ -37,7 +37,7 @@ Follow the steps described in official documentations.
    ```
 4. Execute aplication run:
    ``` bash
-   docker-compose up --build
+   docker-compose up
    ```
 5. Swagger documentation, try api:
   [ http://localhost:8000/docs ](http://localhost:8000/docs) 
